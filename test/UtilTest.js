@@ -1,4 +1,5 @@
 const expect = require('chai').expect;
+const sodium = require('sodium-native');
 const Util = require('../lib/Util');
 
 describe('Util', function () {
@@ -76,5 +77,39 @@ describe('Util', function () {
         ).to.be.equal(
             out.toString('hex')
         );
+    });
+
+    it('Util -- type conversions', function () {
+
+        // BOOL
+        expect(Util.chrToBool("\x02")).to.be.equal(true);
+        expect(Util.chrToBool("\x01")).to.be.equal(false);
+        expect(Util.chrToBool("\x00")).to.be.equal(null);
+        expect(Util.boolToChr(true)).to.be.equal("\x02");
+        expect(Util.boolToChr(false)).to.be.equal("\x01");
+        expect(Util.boolToChr(null)).to.be.equal("\x00");
+
+        // FLOAT
+        let float = Math.PI;
+        expect(
+            Util.bufferToFloat(Util.floatToBuffer(float)).toFixed(9)
+        ).to.be.equal(
+            float.toFixed(9)
+        );
+
+        let a = sodium.randombytes_uniform(0x7ffffff) + 1;
+        let b = sodium.randombytes_uniform(0x7fffffff) + 2;
+        float = a/b;
+        expect(
+            Util.bufferToFloat(Util.floatToBuffer(float)).toFixed(9)
+        ).to.be.equal(
+            float.toFixed(9)
+        );
+
+        // INTEGER
+        for (let i = 0; i < 100; i++) {
+            b = sodium.randombytes_uniform(0x7fffffff);
+            expect(b).to.be.equal(Util.load64_le(Util.store64_le(b)));
+        }
     });
 });

@@ -5,6 +5,7 @@ const sodium = require('sodium-native');
 
 describe('ModernCrypto Tests', function () {
     it('Encrypts and decrypts successfully', function () {
+        this.timeout(5000);
         let random_buf = Buffer.alloc(32, 0);
         sodium.randombytes_buf(random_buf);
         let nacl = new ModernCrypto();
