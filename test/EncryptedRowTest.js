@@ -1,4 +1,3 @@
-const assert = require('assert');
 const expect = require('chai').expect;
 const sodium = require('sodium-native');
 
