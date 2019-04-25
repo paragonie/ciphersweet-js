@@ -4,8 +4,10 @@ module.exports = {
     // ./lib/
     BlindIndex: require('./lib/BlindIndex'),
     CipherSweet: require('./lib/CipherSweet'),
+    CompoundIndex: require('./lib/CompoundIndex'),
     Constants: require('./lib/Constants'),
     EncryptedField: require('./lib/EncryptedField'),
+    EncryptedMultiRows: require('./lib/EncryptedMultiRows'),
     EncryptedRow: require('./lib/EncryptedRow'),
     Util: require('./lib/Util'),
     // ./lib/Backend/
