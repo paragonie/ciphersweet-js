@@ -1,7 +1,7 @@
 const assert = require('assert');
 const expect = require('chai').expect;
 const FIPSCrypto = require('../lib/backend/fipsrypto');
-const SymmetricKey = require('../lib/backend/key/SymmetricKey');
+const SymmetricKey = require('../lib/backend/key/symmetrickey');
 const sodium = require('sodium-native');
 
 describe('FIPSCrypto Tests', function () {

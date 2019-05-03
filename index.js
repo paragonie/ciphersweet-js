@@ -11,7 +11,7 @@ module.exports = {
     EncryptedRow: require('./lib/encryptedrow'),
     Util: require('./lib/util'),
     // ./lib/backend/
-    SymmetricKey: require('./lib/backend/key/SymmetricKey'),
+    SymmetricKey: require('./lib/backend/key/symmetrickey'),
     FIPSCrypto: require('./lib/backend/fipsrypto'),
     ModernCrypto: require('./lib/backend/moderncrypto'),
     // ./lib/contract/
