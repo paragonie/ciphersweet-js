@@ -32,5 +32,17 @@ describe('EncryptedFile', function () {
         let read0 = await fs.readFile(__dirname+'/file-test-0001.txt');
         let read1 = await fs.readFile(__dirname+'/file-test-0001.dec');
         expect(read0.toString('hex')).to.be.equals(read1.toString('hex'));
+    });
+
+    it('Modern Backend', async function () {
+        this.timeout(10000);
+        await fs.writeFile(__dirname+'/file-test-0001.txt', 'This is just a test file.\n\nNothing special.');
+        let eF = new EncryptedFile(naclEngine);
+        await eF.encryptFile(__dirname+'/file-test-0001.txt', __dirname+'/file-test-0001.sodium');
+        await eF.decryptFile(__dirname+'/file-test-0001.sodium', __dirname+'/file-test-0001.sodium-dec');
+
+        let read0 = await fs.readFile(__dirname+'/file-test-0001.txt');
+        let read1 = await fs.readFile(__dirname+'/file-test-0001.sodium-dec');
+        expect(read0.toString('hex')).to.be.equals(read1.toString('hex'));
     })
 });
