@@ -10,3 +10,13 @@ A JavaScript port of [CipherSweet](https://github.com/paragonie/ciphersweet).
 ```
 npm install ciphersweet-js 
 ```
+
+## Using this Library
+
+The **[documentation](https://github.com/paragonie/ciphersweet-js/tree/master/docs)**
+for CipherSweet-js is available online on Github.
+
+## Support Contracts
+
+If your company uses this library in their products or services, you may be
+interested in [purchasing a support contract from Paragon Initiative Enterprises](https://paragonie.com/enterprise).
