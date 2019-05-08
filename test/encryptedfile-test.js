@@ -1,17 +1,13 @@
 "use strict";
 
-const assert = require('assert');
 const expect = require('chai').expect;
 const fs = require('fs-extra');
-const sodium = require('sodium-native');
 
-const BlindIndex = require('../lib/blindindex');
 const CipherSweet = require('../lib/ciphersweet');
 const EncryptedFile = require('../lib/encryptedfile');
 const FIPSCrypto = require('../lib/backend/fipsrypto');
 const ModernCrypto = require('../lib/backend/moderncrypto');
 const StringProvider = require('../lib/keyprovider/stringprovider');
-const Util = require('../lib/util');
 
 let fipsEngine = new CipherSweet(
     new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
@@ -44,5 +40,25 @@ describe('EncryptedFile', function () {
         let read0 = await fs.readFile(__dirname+'/file-test-0001.txt');
         let read1 = await fs.readFile(__dirname+'/file-test-0001.sodium-dec');
         expect(read0.toString('hex')).to.be.equals(read1.toString('hex'));
+    });
+
+    it('PHP interop', async function () {
+        let read;
+        let eF = new EncryptedFile(fipsEngine);
+        await eF.decryptFile(
+            __dirname + '/fips-encrypted.txt',
+            __dirname + '/fips-decrypted.txt'
+        );
+
+        read = await fs.readFile(__dirname+'/fips-decrypted.txt');
+        expect(read.slice(0, 30).toString()).to.be.equal('Paragon Initiative Enterprises');
+
+        let eN = new EncryptedFile(naclEngine);
+        await eN.decryptFile(
+            __dirname + '/nacl-encrypted.txt',
+            __dirname + '/nacl-decrypted.txt'
+        );
+        read = await fs.readFile(__dirname+'/nacl-decrypted.txt');
+        expect(read.slice(0, 30).toString()).to.be.equal('Paragon Initiative Enterprises');
     })
 });
