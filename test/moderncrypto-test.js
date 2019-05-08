@@ -1,7 +1,7 @@
 const assert = require('assert');
 const expect = require('chai').expect;
 const ModernCrypto = require('../lib/backend/moderncrypto');
-const SymmetricKey = require('../lib/backend/key/SymmetricKey');
+const SymmetricKey = require('../lib/backend/key/symmetrickey');
 const sodium = require('sodium-native');
 
 describe('ModernCrypto Tests', function () {

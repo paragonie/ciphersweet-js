@@ -3,6 +3,41 @@ const sodium = require('sodium-native');
 const Util = require('../lib/util');
 
 describe('Util', function () {
+    it('Util.increaseCtrNonce()', async function () {
+        let testCases = [
+            [
+                '00000000000000000000000000000001',
+                '00000000000000000000000000000000'
+            ],
+            [
+                '00000000000000000000000000000100',
+                '000000000000000000000000000000ff'
+            ],
+            [
+                '0000000000000000000000000000ff00',
+                '0000000000000000000000000000feff'
+            ],
+            [
+                '00000000000000000000000000000000',
+                'ffffffffffffffffffffffffffffffff'
+            ]
+        ];
+        let input, output, inBuf;
+        for (let i = 0; i < testCases.length; i++) {
+            [output, input] = testCases[i];
+            inBuf = Buffer.from(input, 'hex');
+            expect(output).to.be.equal(
+                (await Util.increaseCtrNonce(inBuf)).toString('hex')
+            );
+        }
+
+        output = '0000000000000000000000000000feff';
+        inBuf = Buffer.from('0000000000000000000000000000fe00', 'hex');
+        expect(output).to.be.equal(
+            (await Util.increaseCtrNonce(inBuf, 255)).toString('hex')
+        );
+    });
+
     it('Util.andMask()', async function () {
         let input, size, output, outputRight, masked;
         let testCases = [
