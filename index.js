@@ -17,12 +17,23 @@ module.exports = {
     // ./lib/contract/
     Backend: require('./lib/contract/backend'),
     KeyProvider: require('./lib/contract/keyprovider'),
+    RowTransformation: require('./lib/contract/rowtransformation'),
     Transformation: require('./lib/contract/transformation'),
     // ./lib/exception/
+    ArrayKeyExceptin: require('./lib/exception/arraykeyexception'),
     BlindIndexNameCollisionException: require('./lib/exception/blindindexnamecollisionexception'),
     BlindIndexNotFoundException: require('./lib/exception/blindindexnotfoundexception'),
     CipherSweetException: require('./lib/exception/ciphersweetexception'),
     CryptoOperationException: require('./lib/exception/cryptooperationexception'),
+    PlannerException: require('./lib/exception/plannerexception'),
     // ./lib/keyprovider
     StringProvider: require('./lib/keyprovider/stringprovider'),
+    // ./lib/planner
+    FieldIndexPlanner: require('./lib/planner/fieldindexplanner'),
+    // ./lib/transformation
+    AlphaCharactersOnly: require('./lib/transformation/alphacharactersonly'),
+    Compound: require('./lib/transformation/compound'),
+    FirstCharacter: require('./lib/transformation/firstcharacter'),
+    LastFourDigits: require('./lib/transformation/lastfourdigits'),
+    Lowercase: require('./lib/transformation/lowercase')
 };
