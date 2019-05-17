@@ -12,10 +12,10 @@ A JavaScript port of [CipherSweet](https://github.com/paragonie/ciphersweet), wh
 npm install ciphersweet-js 
 ```
 
-## Using this Library
+## Documentation
 
-The **[documentation](https://github.com/paragonie/ciphersweet-js/tree/master/docs)**
-for CipherSweet-js is available online on Github.
+The [**CipherSweet.js documentation**](https://ciphersweet.paragonie.com/node.js) is
+available online at `https://ciphersweet.paragonie.com`.
 
 ## Support Contracts
 
