@@ -22,7 +22,6 @@ describe('FieldIndexPlanner', function () {
             .addExistingIndex('name', 4, Math.MAX_SAFE_INTEGER)
             .addExistingIndex('first_initial_last_name', 4, Math.MAX_SAFE_INTEGER);
 
-        console.log(planner.recommend());
         assert(planner.recommend().min === 1);
         assert(planner.recommend().max === 7);
 
