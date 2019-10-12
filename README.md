@@ -57,6 +57,19 @@ or noncommercial, open source or proprietary, at no cost to you.
 npm install ciphersweet-js 
 ```
 
+**Optional:**
+
+CipherSweet uses [Sodium-Plus](https://github.com/paragonie/sodium-plus) internally.
+The default Sodium-Plus backend is cross-platform, but you can obtain greater
+performance by installing `sodium-native` too.
+
+```terminal
+npm install --save sodium-native
+```
+
+This isn't strictly necessary, and sodium-native doesn't work in browsers, but
+if you're not targeting browsers, you can get a significant performance boost.
+
 ## Documentation
 
 The [**CipherSweet.js documentation**](https://ciphersweet.paragonie.com/node.js) is
