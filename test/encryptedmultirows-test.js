@@ -2,7 +2,8 @@
 
 const assert = require('assert');
 const expect = require('chai').expect;
-const sodium = require('sodium-native');
+const {SodiumPlus} = require('sodium-plus');
+let sodium;
 
 const BlindIndex = require('../lib/blindindex');
 const CipherSweet = require('../lib/ciphersweet');
@@ -14,24 +15,35 @@ const Lowercase = require('../lib/transformation/lowercase');
 const StringProvider = require('../lib/keyprovider/stringprovider');
 const Util = require('../lib/util');
 
-let fipsEngine = new CipherSweet(
-    new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
-    new FIPSCrypto()
-);
-let naclEngine = new CipherSweet(
-    new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
-    new ModernCrypto()
-);
-let buf = Buffer.alloc(32,0);
-sodium.randombytes_buf(buf);
-let fipsRandom = new CipherSweet(
-    new StringProvider(buf.toString('hex')),
-    new FIPSCrypto()
-);
-let naclRandom = new CipherSweet(
-    new StringProvider(buf.toString('hex')),
-    new ModernCrypto()
-);
+let buf, fipsEngine, naclEngine, fipsRandom, naclRandom;
+let initialized = false;
+
+/**
+ * @return {Promise<boolean>}
+ */
+async function initialize() {
+    if (initialized) return true;
+    if (!sodium) sodium = await SodiumPlus.auto();
+    if (!buf) buf = await sodium.randombytes_buf(32);
+    if (!fipsEngine) fipsEngine = new CipherSweet(
+        new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+        new FIPSCrypto()
+    );
+    if (!naclEngine) naclEngine = new CipherSweet(
+        new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+        new ModernCrypto()
+    );
+    if (!fipsRandom) fipsRandom = new CipherSweet(
+        new StringProvider(buf.toString('hex')),
+        new FIPSCrypto()
+    );
+    if (!naclRandom) naclRandom = new CipherSweet(
+        new StringProvider(buf.toString('hex')),
+        new ModernCrypto()
+    );
+    initialized = true;
+    return false;
+}
 
 /**
  * @param {module.CipherSweet} engine
@@ -54,7 +66,8 @@ function getExampleMultiRows(engine)
 }
 
 describe('EncryptedMultiRows', function () {
-    it('Sets up correctly when used correctly', function () {
+    it('Sets up correctly when used correctly', async function () {
+        if (!initialized) await initialize();
         let mr = new EncryptedMultiRows(naclRandom)
             .addTable('foo')
             .addTable('bar');
@@ -80,6 +93,7 @@ describe('EncryptedMultiRows', function () {
     });
 
     it('Encrypts / decrypts rows successfully', async function () {
+        if (!initialized) await initialize();
         let mr = getExampleMultiRows(fipsEngine);
 
         let rows = {
@@ -108,6 +122,7 @@ describe('EncryptedMultiRows', function () {
     });
 
     it('Handles blind indexes and compound indexes well', async function () {
+        if (!initialized) await initialize();
         let mr = getExampleMultiRows(fipsEngine);
         let rows = {
             "foo": {

@@ -2,13 +2,15 @@ const assert = require('assert');
 const expect = require('chai').expect;
 const FIPSCrypto = require('../lib/backend/fipsrypto');
 const SymmetricKey = require('../lib/backend/key/symmetrickey');
-const sodium = require('sodium-native');
+
+const {SodiumPlus} = require('sodium-plus');
+let sodium;
 
 describe('FIPSCrypto Tests', function () {
-    it('Encrypts and decrypts successfully', function () {
+    it('Encrypts and decrypts successfully', async function () {
+        if (!sodium) sodium = await SodiumPlus.auto();
         this.timeout(5000);
-        let random_buf = Buffer.alloc(32, 0);
-        sodium.randombytes_buf(random_buf);
+        let random_buf = await sodium.randombytes_buf(32);
         let fips = new FIPSCrypto();
         let key = new SymmetricKey(random_buf);
         let plaintext, exampleKey, exampleCipher;
