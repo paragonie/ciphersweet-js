@@ -124,6 +124,7 @@ let message = 'This is a test message';
 describe('Key/Backend Rotation', function () {
 
     it('FieldRotator', async function () {
+        this.timeout(0);
         if (!initialized) await initialize();
         let eF = getExampleField(fipsRandom);
         let eM = getExampleField(naclRandom);
@@ -144,6 +145,7 @@ describe('Key/Backend Rotation', function () {
     });
 
     it('RowRotator', async function () {
+        this.timeout(0);
         if (!initialized) await initialize();
         let eFR = getExampleRow(fipsRandom);
         let eMR = getExampleRow(naclRandom);
@@ -168,6 +170,7 @@ describe('Key/Backend Rotation', function () {
     });
 
     it('MultiRowsRotator', async function () {
+        this.timeout(0);
         if (!initialized) await initialize();
 
         let eFMR = getExampleMultiRows(fipsRandom);
