@@ -1,6 +1,7 @@
 const assert = require('assert');
 const expect = require('chai').expect;
-const sodium = require('sodium-native');
+const {SodiumPlus} = require('sodium-plus');
+let sodium;
 
 const BlindIndex = require('../lib/blindindex');
 const CipherSweet = require('../lib/ciphersweet');
@@ -11,24 +12,35 @@ const LastFourDigits = require('../lib/transformation/lastfourdigits');
 const StringProvider = require('../lib/keyprovider/stringprovider');
 const Util = require('../lib/util');
 
-let fipsEngine = new CipherSweet(
-    new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
-    new FIPSCrypto()
-);
-let naclEngine = new CipherSweet(
-    new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
-    new ModernCrypto()
-);
-let buf = Buffer.alloc(32,0);
-sodium.randombytes_buf(buf);
-let fipsRandom = new CipherSweet(
-    new StringProvider(buf.toString('hex')),
-    new FIPSCrypto()
-);
-let naclRandom = new CipherSweet(
-    new StringProvider(buf.toString('hex')),
-    new ModernCrypto()
-);
+let buf, fipsEngine, naclEngine, fipsRandom, naclRandom;
+let initialized = false;
+
+/**
+ * @return {Promise<boolean>}
+ */
+async function initialize() {
+    if (initialized) return true;
+    if (!sodium) sodium = await SodiumPlus.auto();
+    if (!buf) buf = await sodium.randombytes_buf(32);
+    if (!fipsEngine) fipsEngine = new CipherSweet(
+        new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+        new FIPSCrypto()
+    );
+    if (!naclEngine) naclEngine = new CipherSweet(
+        new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+        new ModernCrypto()
+    );
+    if (!fipsRandom) fipsRandom = new CipherSweet(
+        new StringProvider(buf.toString('hex')),
+        new FIPSCrypto()
+    );
+    if (!naclRandom) naclRandom = new CipherSweet(
+        new StringProvider(buf.toString('hex')),
+        new ModernCrypto()
+    );
+    initialized = true;
+    return false;
+}
 
 // Testing utility function
 function getExampleField(backend, longer = false, fast = false)
@@ -61,12 +73,13 @@ function getExampleField(backend, longer = false, fast = false)
 }
 
 describe('EncryptedField', function () {
-    it('Encrypts / decrypts fields successfully', function () {
+    it('Encrypts / decrypts fields successfully', async function () {
+        if (!initialized) await initialize();
         let eF = new EncryptedField(fipsEngine);
         let eM = new EncryptedField(naclEngine);
 
-        let message = 'This is a test message: ' + Util.randomBytes(16).toString('hex');
-        let aad = 'Test AAD:' + Util.randomBytes(32).toString('hex');
+        let message = 'This is a test message: ' + (await Util.randomBytes(16)).toString('hex');
+        let aad = 'Test AAD:' + (await Util.randomBytes(32)).toString('hex');
 
         eF.encryptValue(message).then((fCipher) => {
             eF.decryptValue(fCipher)
@@ -92,7 +105,8 @@ describe('EncryptedField', function () {
         });
     });
 
-    it('Blind Indexing (FIPSCrypto)', function () {
+    it('Blind Indexing (FIPSCrypto)', async function () {
+        if (!initialized) await initialize();
         let ssn = getExampleField(fipsEngine).setTypedIndexes(true);
         ssn.getBlindIndex('111-11-1111', 'contact_ssn_last_four')
             .then((example) => {
@@ -136,8 +150,8 @@ describe('EncryptedField', function () {
             });
     });
 
-    it('Blind Indexing (ModernCrypto)', function () {
-
+    it('Blind Indexing (ModernCrypto)', async function () {
+        if (!initialized) await initialize();
         let ssn = getExampleField(naclEngine).setTypedIndexes(true);
         ssn.getBlindIndex('111-11-1111', 'contact_ssn_last_four')
             .then((example) => {

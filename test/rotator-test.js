@@ -1,6 +1,6 @@
 const assert = require('assert');
 const expect = require('chai').expect;
-const sodium = require('sodium-native');
+const {SodiumPlus} = require('sodium-plus');
 
 const BlindIndex = require('../lib/blindindex');
 const CipherSweet = require('../lib/ciphersweet');
@@ -88,29 +88,43 @@ function getExampleMultiRows(engine)
         );
 }
 
-let fipsEngine = new CipherSweet(
-    new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
-    new FIPSCrypto()
-);
-let naclEngine = new CipherSweet(
-    new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
-    new ModernCrypto()
-);
-let buf = Buffer.alloc(32,0);
-sodium.randombytes_buf(buf);
-let fipsRandom = new CipherSweet(
-    new StringProvider(buf.toString('hex')),
-    new FIPSCrypto()
-);
-let naclRandom = new CipherSweet(
-    new StringProvider(buf.toString('hex')),
-    new ModernCrypto()
-);
+let sodium;
+let buf, fipsEngine, naclEngine, fipsRandom, naclRandom;
+let initialized = false;
+
+/**
+ * @return {Promise<boolean>}
+ */
+async function initialize() {
+    if (initialized) return true;
+    if (!sodium) sodium = await SodiumPlus.auto();
+    if (!buf) buf = await sodium.randombytes_buf(32);
+    if (!fipsEngine) fipsEngine = new CipherSweet(
+        new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+        new FIPSCrypto()
+    );
+    if (!naclEngine) naclEngine = new CipherSweet(
+        new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+        new ModernCrypto()
+    );
+    if (!fipsRandom) fipsRandom = new CipherSweet(
+        new StringProvider(buf.toString('hex')),
+        new FIPSCrypto()
+    );
+    if (!naclRandom) naclRandom = new CipherSweet(
+        new StringProvider(buf.toString('hex')),
+        new ModernCrypto()
+    );
+    initialized = true;
+    return false;
+}
+
 let message = 'This is a test message';
 
 describe('Key/Backend Rotation', function () {
 
     it('FieldRotator', async function () {
+        if (!initialized) await initialize();
         let eF = getExampleField(fipsRandom);
         let eM = getExampleField(naclRandom);
         let fieldRotator = new FieldRotator(eF, eM);
@@ -130,6 +144,7 @@ describe('Key/Backend Rotation', function () {
     });
 
     it('RowRotator', async function () {
+        if (!initialized) await initialize();
         let eFR = getExampleRow(fipsRandom);
         let eMR = getExampleRow(naclRandom);
         let rowRotator = new RowRotator(eFR, eMR);
@@ -153,6 +168,7 @@ describe('Key/Backend Rotation', function () {
     });
 
     it('MultiRowsRotator', async function () {
+        if (!initialized) await initialize();
 
         let eFMR = getExampleMultiRows(fipsRandom);
         let eMMR = getExampleMultiRows(naclRandom);

@@ -1,6 +1,7 @@
 const expect = require('chai').expect;
-const sodium = require('sodium-native');
 const Util = require('../lib/util');
+const {SodiumPlus} = require('sodium-plus');
+let sodium;
 
 describe('Util', function () {
     it('Util.increaseCtrNonce()', async function () {
@@ -107,7 +108,8 @@ describe('Util', function () {
         });
     });
 
-    it('Util -- type conversions', function () {
+    it('Util -- type conversions', async function () {
+        if (!sodium) sodium = await SodiumPlus.auto();
 
         // BOOL
         expect(Util.chrToBool("\x02")).to.be.equal(true);
@@ -125,8 +127,8 @@ describe('Util', function () {
             float.toFixed(9)
         );
 
-        let a = sodium.randombytes_uniform(0x7ffffff) + 1;
-        let b = sodium.randombytes_uniform(0x7fffffff) + 2;
+        let a = await sodium.randombytes_uniform(0x7ffffff) + 1;
+        let b = await sodium.randombytes_uniform(0x7fffffff) + 2;
         float = a/b;
         expect(
             Util.bufferToFloat(Util.floatToBuffer(float)).toFixed(9)
@@ -136,7 +138,7 @@ describe('Util', function () {
 
         // INTEGER
         for (let i = 0; i < 100; i++) {
-            b = sodium.randombytes_uniform(0x7fffffff);
+            b = await sodium.randombytes_uniform(0x7fffffff);
             expect(b).to.be.equal(Util.load64_le(Util.store64_le(b)));
         }
     });
