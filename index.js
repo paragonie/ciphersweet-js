@@ -26,6 +26,10 @@ module.exports = {
     CipherSweetException: require('./lib/exception/ciphersweetexception'),
     CryptoOperationException: require('./lib/exception/cryptooperationexception'),
     PlannerException: require('./lib/exception/plannerexception'),
+    // ./lib/keyrotation
+    FieldRotator: require('./lib/keyrotation/fieldrotator'),
+    RowRotator: require('./lib/keyrotation/rowrotator'),
+    MultiRowsRotator: require('./lib/keyrotation/multirowsrotator'),
     // ./lib/keyprovider
     StringProvider: require('./lib/keyprovider/stringprovider'),
     // ./lib/planner
