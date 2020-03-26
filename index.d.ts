@@ -235,7 +235,7 @@ declare module "ciphersweet-js" {
     export class CipherSweet {
         constructor(
             keyProvider: KeyProvider,
-            encryptionBackend: EncryptionBackend
+            encryptionBackend?: EncryptionBackend
         );
 
         public getBackend(): EncryptionBackend;
