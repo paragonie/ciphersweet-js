@@ -11,7 +11,8 @@
   "devDependencies": {
     "assert": "^2.0.0",
     "chai": "^4.2.0",
-    "mocha": "^7.1.1"
+    "mocha": "^7.1.1",
+    "@types/node": "^12.12.31"
   },
   "keywords": [
     "encrypt",
