@@ -4,6 +4,7 @@
   "description": "Searchable encryption for Node.js projects",
   "repository": "https://github.com/paragonie/ciphersweet-js",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "mocha"
   },
