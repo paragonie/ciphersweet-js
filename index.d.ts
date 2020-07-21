@@ -55,11 +55,22 @@ declare module "ciphersweet-js" {
         ): Promise<FieldStorageTuple>;
     }
 
+    export interface ModernCryptoHashConfig {
+        opslimit: number;
+        memlimit: number;
+    }
+    
+    export interface FIPSCryptoHashConfig {
+        iterations: number;
+    }
+
     export class BlindIndex {
         constructor(
             name: string,
             transforms: Transform[],
-            bloomFilterSizeInBits: number
+            bloomFilterSizeInBits?: number,
+            fastHash?: boolean,
+            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig
         );
     }
 
@@ -67,8 +78,9 @@ declare module "ciphersweet-js" {
         constructor(
             indexName: string,
             fieldNames: string[],
-            bloomFilterSizeInBits: number,
-            fastHash: boolean
+            bloomFilterSizeInBits?: number,
+            fastHash?: boolean,
+            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig
         );
         public addTransform(
             fieldName: string,
@@ -95,8 +107,9 @@ declare module "ciphersweet-js" {
         public createCompoundIndex(
             indexName: string,
             fieldNames: string[],
-            bloomFilterSizeInBits: number,
-            fastHash: boolean
+            bloomFilterSizeInBits?: number,
+            fastHash?: boolean,
+            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig
         ): CompoundIndex;
 
         public prepareRowForStorage(row: any): Promise<RowStorageTuple>;
@@ -152,8 +165,9 @@ declare module "ciphersweet-js" {
             tableName: string,
             indexName: string,
             fieldNames: string[],
-            bloomFilterSizeInBits: number,
-            fastHash: boolean
+            bloomFilterSizeInBits?: number,
+            fastHash?: boolean,
+            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig
         ): CompoundIndex;
 
         public prepareForStorage(input: any): Promise<MultiRowStorageTuple>;
