@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 
 const CipherSweet = require('../lib/ciphersweet');
 const EncryptedFile = require('../lib/encryptedfile');
+const BoringCrypto = require('../lib/backend/boringcrypto');
 const FIPSCrypto = require('../lib/backend/fipsrypto');
 const ModernCrypto = require('../lib/backend/moderncrypto');
 const StringProvider = require('../lib/keyprovider/stringprovider');
@@ -16,6 +17,10 @@ let fipsEngine = new CipherSweet(
 let naclEngine = new CipherSweet(
     new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
     new ModernCrypto()
+);
+let brngEngine = new CipherSweet(
+    new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+    new BoringCrypto()
 );
 
 describe('EncryptedFile', function () {
@@ -42,6 +47,18 @@ describe('EncryptedFile', function () {
         expect(read0.toString('hex')).to.be.equals(read1.toString('hex'));
     });
 
+    it('Boring Backend', async function () {
+        this.timeout(10000);
+        await fs.writeFile(__dirname+'/file-test-0001.txt', 'This is just a test file.\n\nNothing special.');
+        let eF = new EncryptedFile(brngEngine);
+        await eF.encryptFile(__dirname+'/file-test-0001.txt', __dirname+'/file-test-0001.boring');
+        await eF.decryptFile(__dirname+'/file-test-0001.boring', __dirname+'/file-test-0001.boring-dec');
+
+        let read0 = await fs.readFile(__dirname+'/file-test-0001.txt');
+        let read1 = await fs.readFile(__dirname+'/file-test-0001.boring-dec');
+        expect(read0.toString('hex')).to.be.equals(read1.toString('hex'));
+    });
+
     it('PHP interop', async function () {
         let read;
         let eF = new EncryptedFile(fipsEngine);
@@ -59,6 +76,14 @@ describe('EncryptedFile', function () {
             __dirname + '/nacl-decrypted.txt'
         );
         read = await fs.readFile(__dirname+'/nacl-decrypted.txt');
+        expect(read.slice(0, 30).toString()).to.be.equal('Paragon Initiative Enterprises');
+
+        let eB = new EncryptedFile(brngEngine);
+        await eB.decryptFile(
+            __dirname + '/brng-encrypted.txt',
+            __dirname + '/brng-decrypted.txt'
+        );
+        read = await fs.readFile(__dirname+'/brng-decrypted.txt');
         expect(read.slice(0, 30).toString()).to.be.equal('Paragon Initiative Enterprises');
     })
 });
