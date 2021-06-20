@@ -1,6 +1,6 @@
 # CipherSweet.js
 
-[![Travis CI](https://travis-ci.org/paragonie/ciphersweet-js.svg?branch=master)](https://travis-ci.org/paragonie/ciphersweet-js)
+[![Build Status](https://github.com/paragonie/ciphersweet-js/actions/workflows/ci.yml/badge.svg)](https://github.com/paragonie/ciphersweet-js/actions)
 [![npm version](https://img.shields.io/npm/v/ciphersweet-js.svg)](https://npm.im/ciphersweet-js)
 
 A JavaScript port of [CipherSweet](https://github.com/paragonie/ciphersweet), which is a PHP library that implements
