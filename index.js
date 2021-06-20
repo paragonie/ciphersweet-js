@@ -12,6 +12,7 @@ module.exports = {
     Util: require('./lib/util'),
     // ./lib/backend/
     SymmetricKey: require('./lib/backend/key/symmetrickey'),
+    BoringCrypto: require('./lib/backend/boringcrypto'),
     FIPSCrypto: require('./lib/backend/fipsrypto'),
     ModernCrypto: require('./lib/backend/moderncrypto'),
     // ./lib/contract/

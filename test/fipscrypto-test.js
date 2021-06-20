@@ -48,11 +48,10 @@ describe('FIPSCrypto Tests', function () {
                 );
             });
 
+        let exampleDecrypt;
         exampleKey = Buffer.from('ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff', 'hex');
         exampleCipher = 'fips:JkzlZgUUdwo6XDRYSKNTnuWMDVcIa7M4R0Xtg1c3aD14ZUiu5YGTiGu9PC2SAjRAZTTurWYa1KfrMJKSncc0llwcNeyEsWMytOir8oqskQtIF0XEkjTJEJSjxmkerxRfHNyBnOimLZ6fg31IjLWrzOW1UX3ARRwSjabK';
-        fips.decrypt(exampleCipher, exampleKey).then(exampleDecrypt => {
-            expect(exampleDecrypt.toString('utf-8')).to.be.equal('This is just a test message');
-        });
-
+        exampleDecrypt = await fips.decrypt(exampleCipher, exampleKey);
+        expect(exampleDecrypt.toString('utf-8')).to.be.equal('This is just a test message');
     });
 });
