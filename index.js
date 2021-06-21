@@ -18,10 +18,11 @@ module.exports = {
     // ./lib/contract/
     Backend: require('./lib/contract/backend'),
     KeyProvider: require('./lib/contract/keyprovider'),
+    MultiTenantAwareProvider: require('./lib/contract/multitenantawareprovider'),
     RowTransformation: require('./lib/contract/rowtransformation'),
     Transformation: require('./lib/contract/transformation'),
     // ./lib/exception/
-    ArrayKeyExceptin: require('./lib/exception/arraykeyexception'),
+    ArrayKeyException: require('./lib/exception/arraykeyexception'),
     BlindIndexNameCollisionException: require('./lib/exception/blindindexnamecollisionexception'),
     BlindIndexNotFoundException: require('./lib/exception/blindindexnotfoundexception'),
     CipherSweetException: require('./lib/exception/ciphersweetexception'),
@@ -33,6 +34,7 @@ module.exports = {
     MultiRowsRotator: require('./lib/keyrotation/multirowsrotator'),
     // ./lib/keyprovider
     StringProvider: require('./lib/keyprovider/stringprovider'),
+    MultiTenantProvider: require('./lib/keyprovider/multitenantprovider'),
     // ./lib/planner
     FieldIndexPlanner: require('./lib/planner/fieldindexplanner'),
     // ./lib/transformation
