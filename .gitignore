@@ -1,3 +1,8 @@
 /.idea
 /node_modules
 /package-lock.json
+/test/*
+!/test/*.js
+!/test/brng-encrypted.txt
+!/test/nacl-encrypted.txt
+!/test/fips-encrypted.txt

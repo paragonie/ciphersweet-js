@@ -1,6 +1,6 @@
 {
   "name": "ciphersweet-js",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Searchable encryption for Node.js projects",
   "repository": "https://github.com/paragonie/ciphersweet-js",
   "main": "index.js",

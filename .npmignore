@@ -1,0 +1,8 @@
+/.github
+/docs
+/node_modules
+/test/*
+!/test/*.js
+!/test/brng-encrypted.txt
+!/test/nacl-encrypted.txt
+!/test/fips-encrypted.txt
