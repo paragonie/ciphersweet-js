@@ -94,7 +94,7 @@ describe('Multi-Tenant Test', function () {
             const EF = new EncryptedField(cs, 'table', 'column');
             await EF.setActiveTenant('foo');
             let cipher = await EF.encryptValue('test plaintext', 'aad');
-            let plain = await EF.decryptValue(cipher, 'aad');
+            let plain = (await EF.decryptValue(cipher, 'aad')).toString();
             expect(plain).to.be.equals('test plaintext');
 
             let decryptFailed = false;

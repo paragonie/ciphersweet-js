@@ -1,7 +1,28 @@
 declare module "ciphersweet-js" {
-    export interface EncryptionBackend {}
-    export class FIPSCrypto implements EncryptionBackend {}
-    export class ModernCrypto implements EncryptionBackend {}
+    export interface EncryptionBackend {
+        multiTenantSafe(): boolean;
+        getFileEncryptionSaltOffset(): number;
+        decrypt(ciphertext: string, key: SymmetricKey, aad?: string): Promise<Buffer>;
+        encrypt(plaintext: string|Buffer, key: SymmetricKey, aad?: string): Promise<string>;
+    }
+    export class BoringCrypto implements EncryptionBackend {
+        public multiTenantSafe(): true;
+        public getFileEncryptionSaltOffset(): number;
+        public decrypt(ciphertext: string, key: SymmetricKey, aad?: string): Promise<Buffer>;
+        public encrypt(plaintext: string|Buffer, key: SymmetricKey, aad?: string): Promise<string>;
+    }
+    export class FIPSCrypto implements EncryptionBackend {
+        public multiTenantSafe(): true;
+        public getFileEncryptionSaltOffset(): number;
+        public decrypt(ciphertext: string, key: SymmetricKey, aad?: string): Promise<Buffer>;
+        public encrypt(plaintext: string|Buffer, key: SymmetricKey, aad?: string): Promise<string>;
+    }
+    export class ModernCrypto implements EncryptionBackend {
+        public multiTenantSafe(): false;
+        public getFileEncryptionSaltOffset(): number;
+        public decrypt(ciphertext: string, key: SymmetricKey, aad?: string): Promise<Buffer>;
+        public encrypt(plaintext: string|Buffer, key: SymmetricKey, aad?: string): Promise<string>;
+    }
 
     export interface CalculatedBlindIndex {
         type: string;
@@ -45,8 +66,8 @@ declare module "ciphersweet-js" {
             plaintext: string
         ): Promise<{ [indexName: string]: CalculatedBlindIndex }>;
 
-        public encryptValue(plaintext: string, aad?: string);
-        public decryptValue(ciphertext: string, aad?: string);
+        public encryptValue(plaintext: string, aad?: string): Promise<string>;
+        public decryptValue(ciphertext: string, aad?: string): Promise<Buffer>;
 
         // Returns [ciphertext, indexes]
         public prepareForStorage(
@@ -56,6 +77,11 @@ declare module "ciphersweet-js" {
     }
 
     export interface ModernCryptoHashConfig {
+        opslimit: number;
+        memlimit: number;
+    }
+
+    export interface BoringCryptoHashConfig {
         opslimit: number;
         memlimit: number;
     }
@@ -70,7 +96,7 @@ declare module "ciphersweet-js" {
             transforms: Transform[],
             bloomFilterSizeInBits?: number,
             fastHash?: boolean,
-            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig
+            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig | BoringCryptoHashConfig
         );
     }
 
@@ -80,7 +106,7 @@ declare module "ciphersweet-js" {
             fieldNames: string[],
             bloomFilterSizeInBits?: number,
             fastHash?: boolean,
-            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig
+            config?: ModernCryptoHashConfig | FIPSCryptoHashConfig | BoringCryptoHashConfig
         );
         public addTransform(
             fieldName: string,
@@ -112,6 +138,8 @@ declare module "ciphersweet-js" {
             config?: ModernCryptoHashConfig | FIPSCryptoHashConfig
         ): CompoundIndex;
 
+        public decryptRow(row: Map<string, any>): Promise<Map<string, any>>;
+        public encryptRow(row: Map<string, any>): Promise<Map<string, any>>;
         public prepareRowForStorage(row: any): Promise<RowStorageTuple>;
     }
 
@@ -244,6 +272,16 @@ declare module "ciphersweet-js" {
     export class StringProvider extends KeyProvider {
         constructor(hexEncodedKey: string);
     }
+    export class MultiTenantAwareProvider extends KeyProvider {
+        public getActiveTenant(): KeyProvider;
+        public getTenant(name: string): KeyProvider;
+        public setActiveTenant(index: string): MultiTenantAwareProvider;
+        public getTenantFromRow(row: Map<string, any>, tableName: string): string;
+        public injectTenantMetadata(row: Map<string, any>, tableName: string): Map<string, any>;
+    }
+    export class MultiTenantProvider extends MultiTenantAwareProvider {
+        constructor(keyProviders: Map<string, KeyProvider>, active?: string);
+    }
 
     // Main Engine
     export class CipherSweet {
@@ -253,5 +291,12 @@ declare module "ciphersweet-js" {
         );
 
         public getBackend(): EncryptionBackend;
+        public getKeyProviderForActiveTenant(): KeyProvider;
+        public getKeyProviderForTenant(name: string): KeyProvider;
+        public getTenantFromRow(row: Map<string, any>, tableName?: string): string;
+        public setActiveTenant(tenant: string): void;
+        public injectTenantMetadata(row: Map<string, any>, tableName: string): Map<string, any>;
+        public isMultiTenantSupported(): boolean;
+
     }
 }

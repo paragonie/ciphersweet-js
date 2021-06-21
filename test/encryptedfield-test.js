@@ -6,13 +6,14 @@ let sodium;
 const BlindIndex = require('../lib/blindindex');
 const CipherSweet = require('../lib/ciphersweet');
 const EncryptedField = require('../lib/encryptedfield');
+const BoringCrypto = require('../lib/backend/boringcrypto');
 const FIPSCrypto = require('../lib/backend/fipsrypto');
 const ModernCrypto = require('../lib/backend/moderncrypto');
 const LastFourDigits = require('../lib/transformation/lastfourdigits');
 const StringProvider = require('../lib/keyprovider/stringprovider');
 const Util = require('../lib/util');
 
-let buf, fipsEngine, naclEngine, fipsRandom, naclRandom;
+let buf, fipsEngine, naclEngine, fipsRandom, naclRandom, brngEngine, brngRandom;
 let initialized = false;
 
 /**
@@ -30,6 +31,10 @@ async function initialize() {
         new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
         new ModernCrypto()
     );
+    if (!brngEngine) brngEngine = new CipherSweet(
+        new StringProvider('4e1c44f87b4cdf21808762970b356891db180a9dd9850e7baf2a79ff3ab8a2fc'),
+        new BoringCrypto()
+    );
     if (!fipsRandom) fipsRandom = new CipherSweet(
         new StringProvider(buf.toString('hex')),
         new FIPSCrypto()
@@ -37,6 +42,10 @@ async function initialize() {
     if (!naclRandom) naclRandom = new CipherSweet(
         new StringProvider(buf.toString('hex')),
         new ModernCrypto()
+    )
+    if (!brngRandom) brngRandom = new CipherSweet(
+        new StringProvider(buf.toString('hex')),
+        new BoringCrypto()
     );
     initialized = true;
     return false;
@@ -77,32 +86,44 @@ describe('EncryptedField', function () {
         if (!initialized) await initialize();
         let eF = new EncryptedField(fipsEngine);
         let eM = new EncryptedField(naclEngine);
+        let eB = new EncryptedField(brngEngine);
 
         let message = 'This is a test message: ' + (await Util.randomBytes(16)).toString('hex');
         let aad = 'Test AAD:' + (await Util.randomBytes(32)).toString('hex');
 
-        eF.encryptValue(message).then((fCipher) => {
-            eF.decryptValue(fCipher)
-                .then((fDecrypt) => {
-                    expect(fDecrypt).to.be.equal(message);
-                });
-            eF.decryptValue(fCipher, aad)
-                .then(() => {
-                    assert(false === true, 'exception thrown when AAD supplied erroneously')
-                })
-                .catch(() => {return false});
-        });
+        let fCipher = await eF.encryptValue(message);
+        let fDecrypt = await eF.decryptValue(fCipher);
+        expect(fDecrypt.toString()).to.be.equal(message);
+        let thrown = false;
 
-        eM.encryptValue(message).then((mCipher) => {
-            eM.decryptValue(mCipher).then((mDecrypt) => {
-                expect(mDecrypt).to.be.equal(message);
-            });
-            eM.decryptValue(mCipher, aad)
-                .then(() => {
-                    assert(false === true, 'exception thrown when AAD supplied erroneously')
-                })
-                .catch(() => {return false});
-        });
+        try {
+            await eF.decryptValue(fCipher, aad);
+        } catch (e) {
+            thrown = true;
+        }
+        assert(thrown, 'exception thrown when AAD supplied erroneously');
+
+        let mCipher = await eM.encryptValue(message);
+        let mDecrypt = await eM.decryptValue(mCipher);
+        expect(mDecrypt.toString()).to.be.equal(message);
+        thrown = false;
+        try {
+            await eM.decryptValue(mCipher, aad);
+        } catch (e) {
+            thrown = true;
+        }
+        assert(thrown, 'exception thrown when AAD supplied erroneously');
+
+        let bCipher = await eB.encryptValue(message);
+        let bDecrypt = await eB.decryptValue(bCipher);
+        expect(bDecrypt.toString()).to.be.equal(message);
+        thrown = false;
+        try {
+            await eB.decryptValue(bCipher, aad);
+        } catch (e) {
+            thrown = true;
+        }
+        assert(thrown, 'exception thrown when AAD supplied erroneously');
     });
 
     it('Blind Indexing (FIPSCrypto)', async function () {
