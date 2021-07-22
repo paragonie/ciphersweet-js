@@ -93,7 +93,7 @@ declare module "ciphersweet-js" {
     export class BlindIndex {
         constructor(
             name: string,
-            transforms: Transform[],
+            transforms: Transformation[],
             bloomFilterSizeInBits?: number,
             fastHash?: boolean,
             config?: ModernCryptoHashConfig | FIPSCryptoHashConfig | BoringCryptoHashConfig
@@ -110,7 +110,7 @@ declare module "ciphersweet-js" {
         );
         public addTransform(
             fieldName: string,
-            transform: Transform
+            transform: Transformation
         ): CompoundIndex;
         public addRowTransform(transform: RowTransformation): CompoundIndex;
     }
@@ -253,11 +253,12 @@ declare module "ciphersweet-js" {
     }
 
     // Transforms
-    export class Transform {}
-    export class LastFourDigits extends Transform {}
-    export class AlphaCharactersOnly extends Transform {}
-    export class FirstCharacter extends Transform {}
-    export class Lowercase extends Transform {}
+    export class Transform {} // leaving in for backwards compat
+    export class Transformation extends Transform {}
+    export class LastFourDigits extends Transformation {}
+    export class AlphaCharactersOnly extends Transformation {}
+    export class FirstCharacter extends Transformation {}
+    export class Lowercase extends Transformation {}
 
     // Key Providers
     export class SymmetricKey {
