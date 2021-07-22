@@ -20,6 +20,7 @@ module.exports = {
     KeyProvider: require('./lib/contract/keyprovider'),
     MultiTenantAwareProvider: require('./lib/contract/multitenantawareprovider'),
     RowTransformation: require('./lib/contract/rowtransformation'),
+    Transform: require('./lib/contract/transform'),
     Transformation: require('./lib/contract/transformation'),
     // ./lib/exception/
     ArrayKeyException: require('./lib/exception/arraykeyexception'),
