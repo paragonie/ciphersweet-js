@@ -1,6 +1,6 @@
 {
   "name": "ciphersweet-js",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Searchable encryption for Node.js projects",
   "repository": "https://github.com/paragonie/ciphersweet-js",
   "main": "index.js",
@@ -9,10 +9,10 @@
     "test": "mocha"
   },
   "devDependencies": {
-    "@types/node": "^15.12.4",
+    "@types/node": "^16.4.0",
     "assert": "^2.0.0",
     "chai": "^4.3.4",
-    "mocha": "^9.0.1"
+    "mocha": "^9.0.2"
   },
   "keywords": [
     "encrypt",
@@ -28,12 +28,12 @@
   "license": "ISC",
   "dependencies": {
     "clone": "^2.1.2",
-    "fs-extra": "^9.1.0",
+    "fs-extra": "^10.0.0",
     "load-json-file": "^6.2.0",
     "poly1305-js": "^0.4.3",
     "rfc4648": "^1.5.0",
     "sodium-plus": "^0.9.0",
-    "typedarray-to-buffer": "^3.1.5",
+    "typedarray-to-buffer": "^4.0.0",
     "xchacha20-js": "^0.3.0"
   }
 }
