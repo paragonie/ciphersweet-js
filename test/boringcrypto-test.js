@@ -52,8 +52,7 @@ describe('BoringCrypto Tests', function () {
         exampleDecrypt = await brng.decrypt(exampleCipher, exampleKey);
         expect(exampleDecrypt.toString('utf-8')).to.be.equal('This is just a test message');
 
-
-        exampleCipher = 'brng:o4ldrGv1xFJR8unSt7JjdBOxVHUwd5N2i013RCCyvO3cuQA6XgOh4D2vXL-vdOZx0NinrVedOrL7ROX4eh8zblQiORY_bbUZl7MS2akjGLC-FVA=';
+        exampleCipher = 'brng:m3y71cMwhTB2e8YjPLzZ2mwBoMRP1BgqVs_He47bRT5DJbWVBwG_cNsn6xvsl4rT2Cu1QSOEFt_lRECl3w524LlzGwgZ30UDm1KfgaTi9scjmu4=';
         exampleDecrypt = await brng.decrypt(exampleCipher, exampleKey);
         expect(exampleDecrypt.toString('utf-8')).to.be.equal('This is just a test message');
 
@@ -63,7 +62,7 @@ describe('BoringCrypto Tests', function () {
         exampleDecrypt = await brng.decrypt(exampleCipher, exampleKey);
         expect(exampleDecrypt.toString('utf-8')).to.be.equal('This is just a test message');
 
-        exampleCipher = 'brng:VCF5AO8OXAKPb2f_g6zdJyEn-WVWfahxpMmbTMVUMctG3mP3fCqjnyJDfeTeXMqwn57ezd3ZZUl722Y6XggD8pAPKW9pOKL5rKnszCTpAOLE7Iw=';
+        exampleCipher = 'brng:s0oCG2qoJMTWNreJ3AYQhTYSL423gsDYFKmSMDBzOUubIbiNPWSFZmD8uXMO5dmAhuCf5dvTCtfVvl8MADVL0dmub-znB7nEDYH2eMJBCmX-Qyc=';
         exampleDecrypt = await brng.decrypt(exampleCipher, exampleKey);
         expect(exampleDecrypt.toString('utf-8')).to.be.equal('This is just a test message');
     });
