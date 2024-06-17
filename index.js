@@ -9,6 +9,7 @@ module.exports = {
     EncryptedField: require('./lib/encryptedfield'),
     EncryptedMultiRows: require('./lib/encryptedmultirows'),
     EncryptedRow: require('./lib/encryptedrow'),
+    EncryptedFile: require('./lib/encryptedfile'),
     Util: require('./lib/util'),
     // ./lib/backend/
     SymmetricKey: require('./lib/backend/key/symmetrickey'),
